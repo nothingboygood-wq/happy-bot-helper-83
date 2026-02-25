@@ -16,6 +16,8 @@ import {
   Code,
   Copy,
   Check,
+  Settings,
+  AlertTriangle,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -45,6 +47,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"conversations" | "analytics" | "widget">("conversations");
   const [copied, setCopied] = useState(false);
+  const [subscription, setSubscription] = useState<any>(null);
+  const [subLoading, setSubLoading] = useState(true);
 
   const widgetSnippet = user ? `<script src="${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget?uid=${user.id}"></script>` : "";
 
@@ -57,6 +61,23 @@ const Dashboard = () => {
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchSub = async () => {
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      setSubscription(data);
+      setSubLoading(false);
+      if (!data || data.status !== "active") {
+        navigate("/activate");
+      }
+    };
+    fetchSub();
+  }, [user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -84,7 +105,9 @@ const Dashboard = () => {
     fetchMessages();
   }, [selectedConvo]);
 
-  if (authLoading || loading) {
+  const isTrialExpired = subscription?.plan === "trial" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
+
+  if (authLoading || loading || subLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse-soft text-muted-foreground">Loading...</div>
@@ -116,6 +139,9 @@ const Dashboard = () => {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground hidden sm:block">{user?.email}</span>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/settings")}>
+            <Settings className="w-4 h-4 mr-2" /> Settings
+          </Button>
           <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
             <LogOut className="w-4 h-4 mr-2" /> Sign out
           </Button>
@@ -123,6 +149,15 @@ const Dashboard = () => {
       </header>
 
       <div className="container max-w-7xl mx-auto px-6 py-8">
+        {isTrialExpired && (
+          <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Your trial has expired</p>
+              <p className="text-xs text-muted-foreground">Your chatbot widget is currently disabled. Upgrade to continue using BotDesk.</p>
+            </div>
+          </div>
+        )}
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
