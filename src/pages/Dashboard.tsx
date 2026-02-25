@@ -13,6 +13,9 @@ import {
   Users,
   Star,
   Eye,
+  Code,
+  Copy,
+  Check,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -40,7 +43,16 @@ const Dashboard = () => {
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"conversations" | "analytics">("conversations");
+  const [tab, setTab] = useState<"conversations" | "analytics" | "widget">("conversations");
+  const [copied, setCopied] = useState(false);
+
+  const widgetSnippet = user ? `<script src="${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget?uid=${user.id}"></script>` : "";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(widgetSnippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -146,6 +158,14 @@ const Dashboard = () => {
             className={tab === "analytics" ? "gradient-accent text-accent-foreground border-0" : ""}
           >
             <BarChart3 className="w-4 h-4 mr-2" /> Analytics
+          </Button>
+          <Button
+            variant={tab === "widget" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setTab("widget")}
+            className={tab === "widget" ? "gradient-accent text-accent-foreground border-0" : ""}
+          >
+            <Code className="w-4 h-4 mr-2" /> Widget
           </Button>
         </div>
 
@@ -258,6 +278,57 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {tab === "widget" && (
+          <div className="bg-card rounded-xl shadow-card p-8 max-w-3xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg gradient-accent flex items-center justify-center">
+                <Code className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <h3 className="font-display text-xl font-semibold text-foreground">Embed Your Chatbot</h3>
+                <p className="text-sm text-muted-foreground">Add this script to any website to enable your AI chatbot</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Your embed code</label>
+                <div className="relative">
+                  <pre className="bg-secondary rounded-xl p-4 pr-14 text-sm text-secondary-foreground overflow-x-auto whitespace-pre-wrap break-all font-mono">
+                    {widgetSnippet}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-3 right-3"
+                    onClick={handleCopy}
+                  >
+                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-6">
+                <h4 className="font-display font-semibold text-foreground mb-3">How to install</h4>
+                <ol className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 rounded-full gradient-accent text-accent-foreground flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                    <span>Copy the embed code above</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 rounded-full gradient-accent text-accent-foreground flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                    <span>Paste it before the closing <code className="bg-secondary px-1.5 py-0.5 rounded text-xs font-mono">&lt;/body&gt;</code> tag of your website</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 rounded-full gradient-accent text-accent-foreground flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                    <span>The chatbot will appear as a floating button on your site. All conversations will show up in your dashboard.</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
           </div>
         )}
       </div>
