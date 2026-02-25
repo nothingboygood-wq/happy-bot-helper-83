@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,8 +17,30 @@ serve(async (req) => {
   }
 
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
   const CHAT_URL = `${SUPABASE_URL}/functions/v1/chat`;
+
+  // Check subscription status
+  const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+  const { data: isActive } = await supabase.rpc("is_subscription_active", { _user_id: userId });
+
+  if (!isActive) {
+    const inactiveJS = `(function(){ console.warn("BotDesk: Subscription inactive or expired. Widget disabled."); })();`;
+    return new Response(inactiveJS, {
+      headers: { ...corsHeaders, "Content-Type": "application/javascript; charset=utf-8" },
+    });
+  }
+
+  // Fetch widget settings
+  const { data: settings } = await supabase
+    .from("widget_settings")
+    .select("bot_name, greeting_message, system_prompt")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  const botName = settings?.bot_name || "BotDesk AI";
+  const greetingMsg = settings?.greeting_message || "Hi! 👋 How can I help you today?";
 
   const widgetJS = `
 (function() {
@@ -27,6 +50,8 @@ serve(async (req) => {
   var OWNER = "${userId}";
   var CHAT_URL = "${CHAT_URL}";
   var ANON_KEY = "${ANON_KEY}";
+  var BOT_NAME = ${JSON.stringify(botName)};
+  var GREETING = ${JSON.stringify(greetingMsg)};
 
   var style = document.createElement('style');
   style.textContent = \`
@@ -89,7 +114,6 @@ serve(async (req) => {
   \`;
   document.head.appendChild(style);
 
-  // Chat icon SVGs
   var chatSVG = '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';
   var closeSVG = '<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2" fill="none"/></svg>';
   var sendSVG = '<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>';
@@ -102,10 +126,10 @@ serve(async (req) => {
 
   var win = document.createElement('div');
   win.id = 'botdesk-chat-window';
-  win.innerHTML = '<div id="botdesk-header"><div class="avatar">' + botSVG + '</div><div class="info"><h3>BotDesk AI</h3><p>Always online • Powered by AI</p></div></div><div id="botdesk-messages"></div><div id="botdesk-input-area"><input id="botdesk-input" placeholder="Type your message..." /><button id="botdesk-send">' + sendSVG + '</button></div>';
+  win.innerHTML = '<div id="botdesk-header"><div class="avatar">' + botSVG + '</div><div class="info"><h3>' + BOT_NAME + '</h3><p>Always online • Powered by AI</p></div></div><div id="botdesk-messages"></div><div id="botdesk-input-area"><input id="botdesk-input" placeholder="Type your message..." /><button id="botdesk-send">' + sendSVG + '</button></div>';
   document.body.appendChild(win);
 
-  var messages = [{ role: 'assistant', content: 'Hi! 👋 How can I help you today?' }];
+  var messages = [{ role: 'assistant', content: GREETING }];
   var isLoading = false;
   var msgsEl = win.querySelector('#botdesk-messages');
   var inputEl = win.querySelector('#botdesk-input');
