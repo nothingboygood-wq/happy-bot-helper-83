@@ -1,4 +1,5 @@
 import { Bot, Twitter, Linkedin, Github } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -21,7 +22,7 @@ const Footer = () => {
             <h4 className="font-display font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/60">
               <li><a href="#features" className="hover:text-primary-foreground transition-colors">Features</a></li>
-              <li><a href="#pricing" className="hover:text-primary-foreground transition-colors">Pricing</a></li>
+              <li><Link to="/pricing" className="hover:text-primary-foreground transition-colors">Pricing</Link></li>
               <li><a href="#" className="hover:text-primary-foreground transition-colors">Integrations</a></li>
               <li><a href="#" className="hover:text-primary-foreground transition-colors">API Docs</a></li>
             </ul>
@@ -41,7 +42,7 @@ const Footer = () => {
             <h4 className="font-display font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/60">
               <li><a href="#" className="hover:text-primary-foreground transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-primary-foreground transition-colors">Terms of Service</a></li>
+              <li><Link to="/terms" className="hover:text-primary-foreground transition-colors">Terms of Service</Link></li>
               <li><a href="#" className="hover:text-primary-foreground transition-colors">GDPR</a></li>
             </ul>
           </div>
