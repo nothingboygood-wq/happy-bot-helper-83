@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, ArrowLeft, Save, Check } from "lucide-react";
+import { Bot, ArrowLeft, Save, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 const Settings = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [botName, setBotName] = useState("BotDesk AI");
   const [greeting, setGreeting] = useState("Hi! 👋 How can I help you today?");
@@ -88,9 +88,14 @@ const Settings = () => {
           </div>
           <span className="font-display text-xl font-bold text-foreground">BotDesk</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
+            <ArrowLeft className="w-4 h-4 mr-2" /> Dashboard
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
+            <LogOut className="w-4 h-4 mr-2" /> Sign out
+          </Button>
+        </div>
       </header>
 
       <div className="container max-w-2xl mx-auto px-6 py-8">
