@@ -81,6 +81,13 @@ const Auth = () => {
                 minLength={6}
               />
             </div>
+            {!isSignUp && (
+              <div className="text-right">
+                <Link to="/forgot-password" className="text-xs text-accent hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+            )}
             <Button
               type="submit"
               className="w-full gradient-accent text-accent-foreground hover:opacity-90 border-0"
