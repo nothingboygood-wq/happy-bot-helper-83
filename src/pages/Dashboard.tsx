@@ -18,6 +18,7 @@ import {
   Check,
   Settings,
   AlertTriangle,
+  Shield,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -49,6 +50,7 @@ const Dashboard = () => {
   const [copied, setCopied] = useState(false);
   const [subscription, setSubscription] = useState<any>(null);
   const [subLoading, setSubLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const widgetSnippet = user ? `<script src="${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget?uid=${user.id}"></script>` : "";
 
@@ -71,6 +73,13 @@ const Dashboard = () => {
         .eq("user_id", user.id)
         .maybeSingle();
       setSubscription(data);
+
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      setIsAdmin(roles?.some((r: any) => r.role === "admin") ?? false);
+
       setSubLoading(false);
       if (!data || data.status !== "active") {
         navigate("/activate");
@@ -139,6 +148,11 @@ const Dashboard = () => {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground hidden sm:block">{user?.email}</span>
+          {isAdmin && (
+            <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+              <Shield className="w-4 h-4 mr-2" /> Admin
+            </Button>
+          )}
           <Button variant="ghost" size="sm" onClick={() => navigate("/settings")}>
             <Settings className="w-4 h-4 mr-2" /> Settings
           </Button>
