@@ -4,11 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bot, CreditCard, Shield, Check, Sparkles } from "lucide-react";
+import { Bot, CreditCard, Shield, Check, Sparkles, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 const ActivateTrial = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
@@ -140,7 +140,13 @@ const ActivateTrial = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex flex-col px-4">
+      <div className="flex justify-end p-4">
+        <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
+          <LogOut className="w-4 h-4 mr-2" /> Sign out
+        </Button>
+      </div>
+      <div className="flex-1 flex items-center justify-center">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl gradient-accent flex items-center justify-center mx-auto mb-4">
@@ -203,6 +209,7 @@ const ActivateTrial = () => {
             <span>Your card info is stored securely. Cancel anytime.</span>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
