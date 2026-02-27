@@ -1,12 +1,15 @@
 import { Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { usePaddle, PADDLE_PRICES } from "@/hooks/usePaddle";
 
 const plans = [
   {
     name: "Starter",
     price: "$29",
     period: "/mo",
+    priceId: PADDLE_PRICES.starter,
     description: "For small businesses getting started with AI support.",
     features: [
       "1 website integration",
@@ -22,6 +25,7 @@ const plans = [
     name: "Growth",
     price: "$79",
     period: "/mo",
+    priceId: PADDLE_PRICES.growth,
     description: "For growing teams that need advanced capabilities.",
     features: [
       "5 website integrations",
@@ -39,6 +43,7 @@ const plans = [
     name: "Enterprise",
     price: "Custom",
     period: "",
+    priceId: PADDLE_PRICES.enterprise,
     description: "For large-scale operations with custom needs.",
     features: [
       "Unlimited integrations",
@@ -55,6 +60,18 @@ const plans = [
 ];
 
 const Pricing = () => {
+  const { user } = useAuth();
+  const { openCheckout } = usePaddle();
+  const navigate = useNavigate();
+
+  const handlePlanClick = (plan: typeof plans[0]) => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    openCheckout(plan.priceId, user.email ?? undefined);
+  };
+
   return (
     <section id="pricing" className="py-28 px-6">
       <div className="container max-w-6xl mx-auto">
@@ -121,7 +138,6 @@ const Pricing = () => {
                   </span>
                 </div>
 
-                <Link to="/auth">
                   <Button
                     className={`w-full font-medium group ${
                       plan.popular
@@ -129,11 +145,11 @@ const Pricing = () => {
                         : "bg-foreground text-background hover:bg-foreground/90"
                     }`}
                     size="lg"
+                    onClick={() => handlePlanClick(plan)}
                   >
                     {plan.cta}
                     <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
                   </Button>
-                </Link>
 
                 <div
                   className={`my-8 h-px ${

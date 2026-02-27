@@ -113,6 +113,8 @@ export type Database = {
           card_last_four: string | null
           created_at: string
           id: string
+          paddle_customer_id: string | null
+          paddle_subscription_id: string | null
           plan: string
           status: string
           trial_ends_at: string | null
@@ -125,6 +127,8 @@ export type Database = {
           card_last_four?: string | null
           created_at?: string
           id?: string
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           plan?: string
           status?: string
           trial_ends_at?: string | null
@@ -137,6 +141,8 @@ export type Database = {
           card_last_four?: string | null
           created_at?: string
           id?: string
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           plan?: string
           status?: string
           trial_ends_at?: string | null
