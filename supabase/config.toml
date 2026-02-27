@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.widget]
 verify_jwt = false
+
+[functions.paddle-webhook]
+verify_jwt = false
