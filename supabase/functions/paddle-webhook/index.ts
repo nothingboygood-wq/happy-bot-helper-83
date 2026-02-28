@@ -48,12 +48,13 @@ Deno.serve(async (req) => {
       }
 
       const userId = profiles[0].user_id;
+      const priceId = data.items?.[0]?.price?.id;
       const plan =
-        data.items?.[0]?.price?.id === "pro_01kjewf5490n8aydfm3fb72nk0"
+        priceId === "pri_01kjeyspgn3smejp2dyb55nwy6"
           ? "starter"
-          : data.items?.[0]?.price?.id === "pro_01kjewhc3mp3vd473nwpqp25c7"
+          : priceId === "pri_01kjeytvp30tfrx579svf206w8"
           ? "growth"
-          : "enterprise";
+          : "high_end";
 
       const subStatus =
         status === "active" || status === "trialing" ? "active" : "inactive";

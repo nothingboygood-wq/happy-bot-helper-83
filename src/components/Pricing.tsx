@@ -40,11 +40,11 @@ const plans = [
     cta: "Start Free Trial",
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    priceId: PADDLE_PRICES.enterprise,
-    description: "For large-scale operations with custom needs.",
+    name: "High End",
+    price: "$120",
+    period: "/mo",
+    priceId: PADDLE_PRICES.highEnd,
+    description: "For large-scale operations with premium capabilities.",
     features: [
       "Unlimited integrations",
       "Unlimited conversations",
@@ -55,7 +55,7 @@ const plans = [
       "SLA guarantee",
     ],
     popular: false,
-    cta: "Contact Sales",
+    cta: "Start Free Trial",
   },
 ];
 
