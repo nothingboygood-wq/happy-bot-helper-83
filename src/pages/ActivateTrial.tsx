@@ -23,10 +23,10 @@ const plans = [
     features: ["5 integrations", "5,000 conversations/mo", "Advanced NLP", "Multi-language", "Live chat escalation"],
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    priceId: PADDLE_PRICES.enterprise,
+    name: "High End",
+    price: "$120",
+    period: "/mo",
+    priceId: PADDLE_PRICES.highEnd,
     features: ["Unlimited integrations", "Unlimited conversations", "Custom AI training", "Dedicated manager"],
   },
 ];
