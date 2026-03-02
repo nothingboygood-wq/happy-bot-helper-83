@@ -82,7 +82,7 @@ const Dashboard = () => {
 
       setSubLoading(false);
       if (!data || data.status !== "active") {
-        navigate("/activate");
+        navigate("/onboarding");
       }
     };
     fetchSub();
