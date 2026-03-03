@@ -1,4 +1,5 @@
-import { MessageSquare, ShoppingBag, BarChart3, Mail, Hash, FileText, CreditCard, Database } from "lucide-react";
+import { MessageSquare, ShoppingBag, BarChart3, Hash, FileText, CreditCard } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const integrations = [
   { name: "WhatsApp", icon: MessageSquare, color: "text-green-500" },
@@ -15,17 +16,21 @@ const Integrations = () => {
   return (
     <section className="py-12 px-6 border-y border-border/50">
       <div className="container max-w-6xl mx-auto">
-        <p className="text-center text-sm text-muted-foreground mb-8">
-          Integrates with the tools you already use
-        </p>
+        <ScrollReveal>
+          <p className="text-center text-sm text-muted-foreground mb-8">
+            Integrates with the tools you already use
+          </p>
+        </ScrollReveal>
         <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-          {integrations.map((item) => (
-            <div key={item.name} className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center group-hover:bg-accent/10 transition-colors">
-                <item.icon className={`w-6 h-6 ${item.color}`} />
+          {integrations.map((item, i) => (
+            <ScrollReveal key={item.name} delay={i * 0.05}>
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center group-hover:bg-accent/10 transition-colors">
+                  <item.icon className={`w-6 h-6 ${item.color}`} />
+                </div>
+                <span className="text-xs text-muted-foreground font-medium">{item.name}</span>
               </div>
-              <span className="text-xs text-muted-foreground font-medium">{item.name}</span>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

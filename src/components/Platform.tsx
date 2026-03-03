@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Play, Activity, Database, MessageSquare, Users } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const tabs = [
   {
@@ -46,53 +48,66 @@ const Platform = () => {
   return (
     <section className="py-24 px-6 bg-secondary/30">
       <div className="container max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent font-medium text-sm mb-4">
-            Platform
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
-            Support Your Customers With AI
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Manage conversations, track performance, and gain insights — all in one place.
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
-                activeTab === tab.id
-                  ? "bg-foreground text-background shadow-elevated"
-                  : "bg-card text-muted-foreground hover:text-foreground ring-1 ring-border"
-              }`}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Preview area */}
-        <div className="bg-card rounded-2xl shadow-elevated overflow-hidden max-w-4xl mx-auto">
-          <div className="border-b border-border/50 px-6 py-3 flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-destructive/50" />
-            <div className="w-3 h-3 rounded-full bg-accent/50" />
-            <div className="w-3 h-3 rounded-full bg-accent/30" />
-            <span className="ml-4 text-xs text-muted-foreground">botdesk.co/dashboard/{active.id}</span>
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent font-medium text-sm mb-4">
+              Platform
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
+              Support Your Customers With AI
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Manage conversations, track performance, and gain insights — all in one place.
+            </p>
           </div>
+        </ScrollReveal>
 
-          <div className="p-12 text-center min-h-[300px] flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl gradient-accent flex items-center justify-center mb-6">
-              <active.icon className="w-8 h-8 text-accent-foreground" />
+        <ScrollReveal delay={0.1}>
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  activeTab === tab.id
+                    ? "bg-foreground text-background shadow-elevated"
+                    : "bg-card text-muted-foreground hover:text-foreground ring-1 ring-border"
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.2}>
+          <div className="bg-card rounded-2xl shadow-elevated overflow-hidden max-w-4xl mx-auto">
+            <div className="border-b border-border/50 px-6 py-3 flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-destructive/50" />
+              <div className="w-3 h-3 rounded-full bg-accent/50" />
+              <div className="w-3 h-3 rounded-full bg-accent/30" />
+              <span className="ml-4 text-xs text-muted-foreground">botdesk.co/dashboard/{active.id}</span>
             </div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-3">{active.title}</h3>
-            <p className="text-muted-foreground max-w-md leading-relaxed">{active.description}</p>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="p-12 text-center min-h-[300px] flex flex-col items-center justify-center"
+              >
+                <div className="w-16 h-16 rounded-2xl gradient-accent flex items-center justify-center mb-6">
+                  <active.icon className="w-8 h-8 text-accent-foreground" />
+                </div>
+                <h3 className="font-display text-2xl font-bold text-foreground mb-3">{active.title}</h3>
+                <p className="text-muted-foreground max-w-md leading-relaxed">{active.description}</p>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );
