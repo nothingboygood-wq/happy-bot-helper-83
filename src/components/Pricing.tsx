@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { usePaddle, PADDLE_PRICES } from "@/hooks/usePaddle";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const monthlyPlans = [
   {
@@ -85,32 +86,34 @@ const Pricing = () => {
   return (
     <section id="pricing" className="py-28 px-6">
       <div className="container max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-accent font-medium text-sm tracking-wider uppercase mb-3">
-            Pricing
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-5 tracking-tight">
-            Plans that scale with you
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
-            Start with a free trial. Upgrade when you're ready. No hidden fees, cancel anytime.
-          </p>
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <p className="text-accent font-medium text-sm tracking-wider uppercase mb-3">
+              Pricing
+            </p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-5 tracking-tight">
+              Plans that scale with you
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
+              Start with a free trial. Upgrade when you're ready. No hidden fees, cancel anytime.
+            </p>
 
-          {/* Billing toggle */}
-          <div className="flex items-center justify-center gap-3 mt-8">
-            <span className={`text-sm font-medium ${billing === "monthly" ? "text-foreground" : "text-muted-foreground"}`}>Monthly</span>
-            <button
-              onClick={() => setBilling(billing === "monthly" ? "yearly" : "monthly")}
-              className={`relative w-14 h-7 rounded-full transition-colors ${billing === "yearly" ? "bg-accent" : "bg-border"}`}
-            >
-              <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform ${billing === "yearly" ? "translate-x-7" : ""}`} />
-            </button>
-            <span className={`text-sm font-medium ${billing === "yearly" ? "text-foreground" : "text-muted-foreground"}`}>
-              Yearly
-              <span className="ml-1.5 text-xs text-accent font-semibold">Save 20%</span>
-            </span>
+            {/* Billing toggle */}
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <span className={`text-sm font-medium ${billing === "monthly" ? "text-foreground" : "text-muted-foreground"}`}>Monthly</span>
+              <button
+                onClick={() => setBilling(billing === "monthly" ? "yearly" : "monthly")}
+                className={`relative w-14 h-7 rounded-full transition-colors ${billing === "yearly" ? "bg-accent" : "bg-border"}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform ${billing === "yearly" ? "translate-x-7" : ""}`} />
+              </button>
+              <span className={`text-sm font-medium ${billing === "yearly" ? "text-foreground" : "text-muted-foreground"}`}>
+                Yearly
+                <span className="ml-1.5 text-xs text-accent font-semibold">Save 20%</span>
+              </span>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-start">
           {plans.map((plan) => (
