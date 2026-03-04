@@ -144,7 +144,7 @@ const Dashboard = () => {
           <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
             <Bot className="w-5 h-5 text-accent-foreground" />
           </div>
-          <span className="font-display text-xl font-bold text-foreground">BotDesk</span>
+          <span className="font-display text-xl font-bold text-foreground">NexaDesk</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground hidden sm:block">{user?.email}</span>
@@ -168,7 +168,7 @@ const Dashboard = () => {
             <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
             <div>
               <p className="text-sm font-medium text-foreground">Your trial has expired</p>
-              <p className="text-xs text-muted-foreground">Your chatbot widget is currently disabled. Upgrade to continue using BotDesk.</p>
+              <p className="text-xs text-muted-foreground">Your chatbot widget is currently disabled. Upgrade to continue using NexaDesk.</p>
             </div>
           </div>
         )}

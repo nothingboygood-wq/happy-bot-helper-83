@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const termsSections = [
   {
     title: "Service Overview",
-    body: "BotDesk provides AI-powered customer support tools, including chat automation, analytics, and integration capabilities. Access to certain features depends on your selected subscription plan.",
+    body: "NexaDesk provides AI-powered customer support tools, including chat automation, analytics, and integration capabilities. Access to certain features depends on your selected subscription plan.",
   },
   {
     title: "Account Responsibilities",
@@ -22,7 +22,7 @@ const termsSections = [
   },
   {
     title: "Data & Privacy",
-    body: "You retain ownership of your content and customer data. By using BotDesk, you grant us limited rights to process this data solely to provide and improve the service, subject to applicable privacy laws.",
+    body: "You retain ownership of your content and customer data. By using NexaDesk, you grant us limited rights to process this data solely to provide and improve the service, subject to applicable privacy laws.",
   },
   {
     title: "Termination",
@@ -43,7 +43,7 @@ const Terms = () => {
             <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
               <Bot className="w-5 h-5 text-accent-foreground" />
             </div>
-            <span className="font-display text-xl font-bold text-foreground">BotDesk</span>
+            <span className="font-display text-xl font-bold text-foreground">NexaDesk</span>
           </Link>
           <Link to="/pricing">
             <Button variant="ghost" size="sm" className="text-muted-foreground">

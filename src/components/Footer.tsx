@@ -11,7 +11,7 @@ const Footer = () => {
               <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
                 <Bot className="w-5 h-5 text-accent-foreground" />
               </div>
-              <span className="font-display text-xl font-bold">BotDesk</span>
+              <span className="font-display text-xl font-bold">NexaDesk</span>
             </div>
             <p className="text-primary-foreground/60 text-sm leading-relaxed">
               AI-powered customer support that never sleeps. Built for businesses that care about their customers.
@@ -50,7 +50,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-primary-foreground/40">
-            © 2026 BotDesk. All rights reserved.
+            © 2026 NexaDesk. All rights reserved.
           </p>
           <div className="flex gap-4">
             <a href="#" className="text-primary-foreground/40 hover:text-primary-foreground transition-colors">

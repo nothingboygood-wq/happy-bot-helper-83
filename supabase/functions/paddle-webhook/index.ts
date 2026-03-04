@@ -50,9 +50,9 @@ Deno.serve(async (req) => {
       const userId = profiles[0].user_id;
       const priceId = data.items?.[0]?.price?.id;
       const plan =
-        priceId === "pri_01kjeyspgn3smejp2dyb55nwy6"
+        priceId === "pri_01kjvpen0tdqe4tg6faypq8x88"
           ? "starter"
-          : priceId === "pri_01kjeytvp30tfrx579svf206w8"
+          : priceId === "pri_01kjvpfw6ks6bhjb92hev88ssy"
           ? "growth"
           : "high_end";
 

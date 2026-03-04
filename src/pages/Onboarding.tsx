@@ -33,7 +33,7 @@ const Onboarding = () => {
 
   const [step, setStep] = useState(0);
   const [companyName, setCompanyName] = useState("");
-  const [botName, setBotName] = useState("BotDesk AI");
+  const [botName, setBotName] = useState("NexaDesk AI");
   const [greeting, setGreeting] = useState("Hi! 👋 How can I help you today?");
   const [systemPrompt, setSystemPrompt] = useState(
     "You are a friendly and helpful customer support chatbot. You help visitors with their questions about the business. Keep responses concise, professional, and helpful."
@@ -142,7 +142,7 @@ const Onboarding = () => {
           <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
             <Bot className="w-5 h-5 text-accent-foreground" />
           </div>
-          <span className="font-display text-xl font-bold text-foreground">BotDesk</span>
+          <span className="font-display text-xl font-bold text-foreground">NexaDesk</span>
         </div>
         <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
           <LogOut className="w-4 h-4 mr-2" /> Sign out
@@ -180,7 +180,7 @@ const Onboarding = () => {
               <div className="w-16 h-16 rounded-2xl gradient-accent flex items-center justify-center mx-auto mb-6">
                 <Building2 className="w-8 h-8 text-accent-foreground" />
               </div>
-              <h1 className="font-display text-3xl font-bold text-foreground mb-2">Welcome to BotDesk!</h1>
+              <h1 className="font-display text-3xl font-bold text-foreground mb-2">Welcome to NexaDesk!</h1>
               <p className="text-muted-foreground mb-8">Let's get your AI chatbot set up. What's your company called?</p>
               <div className="max-w-sm mx-auto">
                 <Input
@@ -205,7 +205,7 @@ const Onboarding = () => {
               <div className="space-y-5">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Bot Name</label>
-                  <Input value={botName} onChange={(e) => setBotName(e.target.value)} placeholder="BotDesk AI" />
+                  <Input value={botName} onChange={(e) => setBotName(e.target.value)} placeholder="NexaDesk AI" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Greeting Message</label>
@@ -268,7 +268,7 @@ const Onboarding = () => {
                   <Sparkles className="w-8 h-8 text-accent-foreground" />
                 </div>
                 <h2 className="font-display text-2xl font-bold text-foreground mb-2">Choose Your Plan</h2>
-                <p className="text-muted-foreground">Pick a plan to activate your BotDesk chatbot.</p>
+                <p className="text-muted-foreground">Pick a plan to activate your NexaDesk chatbot.</p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">

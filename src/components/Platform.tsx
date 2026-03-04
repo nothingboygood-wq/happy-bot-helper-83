@@ -87,7 +87,7 @@ const Platform = () => {
               <div className="w-3 h-3 rounded-full bg-destructive/50" />
               <div className="w-3 h-3 rounded-full bg-accent/50" />
               <div className="w-3 h-3 rounded-full bg-accent/30" />
-              <span className="ml-4 text-xs text-muted-foreground">botdesk.co/dashboard/{active.id}</span>
+              <span className="ml-4 text-xs text-muted-foreground">nexadesk.co/dashboard/{active.id}</span>
             </div>
 
             <AnimatePresence mode="wait">

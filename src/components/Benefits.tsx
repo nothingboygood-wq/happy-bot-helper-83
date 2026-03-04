@@ -37,7 +37,7 @@ const Benefits = () => {
               Works Like Your Best Support Agent
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              BotDesk integrates seamlessly with your existing tools and workflows, delivering a human-like experience that delights customers.
+              NexaDesk integrates seamlessly with your existing tools and workflows, delivering a human-like experience that delights customers.
             </p>
           </div>
         </ScrollReveal>

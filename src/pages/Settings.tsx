@@ -11,7 +11,7 @@ import { toast } from "sonner";
 const Settings = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [botName, setBotName] = useState("BotDesk AI");
+  const [botName, setBotName] = useState("NexaDesk AI");
   const [greeting, setGreeting] = useState("Hi! 👋 How can I help you today?");
   const [systemPrompt, setSystemPrompt] = useState(
     "You are a friendly and helpful customer support chatbot. You help visitors with their questions about the business. Keep responses concise, professional, and helpful."
@@ -86,7 +86,7 @@ const Settings = () => {
           <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
             <Bot className="w-5 h-5 text-accent-foreground" />
           </div>
-          <span className="font-display text-xl font-bold text-foreground">BotDesk</span>
+          <span className="font-display text-xl font-bold text-foreground">NexaDesk</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
@@ -108,7 +108,7 @@ const Settings = () => {
             <Input
               value={botName}
               onChange={(e) => setBotName(e.target.value)}
-              placeholder="BotDesk AI"
+              placeholder="NexaDesk AI"
             />
             <p className="text-xs text-muted-foreground mt-1">Displayed in the chat widget header.</p>
           </div>
