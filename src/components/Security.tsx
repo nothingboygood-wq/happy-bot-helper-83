@@ -41,7 +41,7 @@ const Security = () => {
               Enterprise-Grade Security & Privacy
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              BotDesk is fully secure, trusted by businesses worldwide to build private AI agents.
+              NexaDesk is fully secure, trusted by businesses worldwide to build private AI agents.
             </p>
           </div>
         </ScrollReveal>

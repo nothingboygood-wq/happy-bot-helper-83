@@ -14,7 +14,7 @@ const ChatWidget = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! 👋 I'm BotDesk's AI assistant. How can I help you today?" },
+    { role: "assistant", content: "Hi! 👋 I'm NexaDesk's AI assistant. How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -149,7 +149,7 @@ const ChatWidget = () => {
               <Bot className="w-5 h-5 text-accent-foreground" />
             </div>
             <div>
-              <h3 className="font-display font-semibold text-primary-foreground text-sm">BotDesk AI</h3>
+              <h3 className="font-display font-semibold text-primary-foreground text-sm">NexaDesk AI</h3>
               <p className="text-primary-foreground/60 text-xs">Always online • Powered by AI</p>
             </div>
           </div>

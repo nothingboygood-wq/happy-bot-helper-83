@@ -99,7 +99,7 @@ const ActivateTrial = () => {
               <Bot className="w-8 h-8 text-accent-foreground" />
             </div>
             <h1 className="font-display text-3xl font-bold text-foreground">Choose Your Plan</h1>
-            <p className="text-muted-foreground mt-2">Pick a plan to activate your BotDesk AI chatbot</p>
+            <p className="text-muted-foreground mt-2">Pick a plan to activate your NexaDesk AI chatbot</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">

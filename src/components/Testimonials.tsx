@@ -3,7 +3,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 
 const testimonials = [
   {
-    quote: "BotDesk transformed our support. We automated 80% of queries and our customer satisfaction score jumped from 3.2 to 4.8 in just two months.",
+    quote: "NexaDesk transformed our support. We automated 80% of queries and our customer satisfaction score jumped from 3.2 to 4.8 in just two months.",
     name: "Sarah Chen",
     role: "Head of Support, TechFlow",
     avatar: "SC",
@@ -72,7 +72,7 @@ const Testimonials = () => {
                 Stop Drowning In Tickets. Start Resolving Them Instantly.
               </h3>
               <p className="text-background/60 mb-6 max-w-lg mx-auto text-sm">
-                Join 200+ companies using BotDesk to automate 80% of customer questions while keeping a human touch.
+                Join 200+ companies using NexaDesk to automate 80% of customer questions while keeping a human touch.
               </p>
               <a href="/auth">
                 <button className="gradient-accent text-accent-foreground px-8 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">

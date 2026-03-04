@@ -67,7 +67,7 @@ const ResetPassword = () => {
             <div className="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center">
               <Bot className="w-6 h-6 text-accent-foreground" />
             </div>
-            <span className="font-display text-2xl font-bold text-foreground">BotDesk</span>
+            <span className="font-display text-2xl font-bold text-foreground">NexaDesk</span>
           </div>
 
           <h2 className="font-display text-xl font-semibold text-foreground mb-1">Set new password</h2>

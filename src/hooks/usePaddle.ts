@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
-const PADDLE_CLIENT_TOKEN = "live_187e903e1f9473c48b206328a0c";
+const PADDLE_CLIENT_TOKEN = "live_6b06aae42445419a91623a56dfd";
 
 export const PADDLE_PRICES = {
-  starter: "pri_01kjeyspgn3smejp2dyb55nwy6",
-  growth: "pri_01kjeytvp30tfrx579svf206w8",
-  highEnd: "pri_01kjeyx4bm5ktjb81a131dbycw",
+  starter: "pri_01kjvpen0tdqe4tg6faypq8x88",
+  growth: "pri_01kjvpfw6ks6bhjb92hev88ssy",
+  highEnd: "pri_01kjvpjk6cx315wps5hdd818eh",
 } as const;
 
 export const usePaddle = () => {
