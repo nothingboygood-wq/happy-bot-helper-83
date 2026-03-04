@@ -231,7 +231,7 @@ const Pricing = () => {
               <Button
                 className="w-full font-medium group bg-foreground text-background hover:bg-foreground/90"
                 size="lg"
-                onClick={() => window.open("mailto:support@nexadesk.co?subject=Enterprise%20Plan%20Inquiry", "_blank")}
+                onClick={() => window.open("mailto:nexadesk@gmail.com?subject=Enterprise%20Plan%20Inquiry", "_blank")}
               >
                 Contact Sales
                 <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
