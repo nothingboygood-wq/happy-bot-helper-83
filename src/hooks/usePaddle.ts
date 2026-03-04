@@ -22,8 +22,16 @@ export const usePaddle = () => {
   }, []);
 
   const openCheckout = (priceId: string, email?: string) => {
-    paddle?.Checkout.open({
+    if (!paddle) {
+      console.error("Paddle not initialized yet");
+      return;
+    }
+    paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
+      settings: {
+        successUrl: `${window.location.origin}/dashboard`,
+        allowLogout: false,
+      },
       ...(email ? { customer: { email } } : {}),
     });
   };

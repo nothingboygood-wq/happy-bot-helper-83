@@ -42,7 +42,7 @@ const Hero = () => {
               variant="outline"
               size="lg"
               className="px-8 text-base font-medium"
-              onClick={() => window.open("mailto:support@nexadesk.co?subject=Demo%20Request", "_blank")}
+              onClick={() => window.open("mailto:nexadesk@gmail.com?subject=Demo%20Request", "_blank")}
             >
               Get a Demo
             </Button>

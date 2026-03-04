@@ -312,7 +312,7 @@ const Onboarding = () => {
               </div>
 
               <div className="text-center mt-4">
-                <Button variant="link" className="text-muted-foreground text-sm" onClick={() => window.open("mailto:support@botdesk.co?subject=Enterprise%20Plan", "_blank")}>
+                <Button variant="link" className="text-muted-foreground text-sm" onClick={() => window.open("mailto:nexadesk@gmail.com?subject=Enterprise%20Plan", "_blank")}>
                   Need Enterprise? Contact Sales →
                 </Button>
               </div>
