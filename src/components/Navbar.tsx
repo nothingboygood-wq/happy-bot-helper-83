@@ -2,6 +2,7 @@ import { Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -23,6 +24,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {user ? (
             <Link to="/dashboard">
               <Button size="sm" className="gradient-accent text-accent-foreground hover:opacity-90 border-0">
