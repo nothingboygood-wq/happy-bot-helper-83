@@ -175,27 +175,48 @@ export type Database = {
           created_at: string
           greeting_message: string
           id: string
+          model: string
+          primary_color: string
+          profile_picture_url: string | null
           system_prompt: string
+          template: string
+          theme: string
+          training_text: string | null
           updated_at: string
           user_id: string
+          website_url: string | null
         }
         Insert: {
           bot_name?: string
           created_at?: string
           greeting_message?: string
           id?: string
+          model?: string
+          primary_color?: string
+          profile_picture_url?: string | null
           system_prompt?: string
+          template?: string
+          theme?: string
+          training_text?: string | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
         }
         Update: {
           bot_name?: string
           created_at?: string
           greeting_message?: string
           id?: string
+          model?: string
+          primary_color?: string
+          profile_picture_url?: string | null
           system_prompt?: string
+          template?: string
+          theme?: string
+          training_text?: string | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }

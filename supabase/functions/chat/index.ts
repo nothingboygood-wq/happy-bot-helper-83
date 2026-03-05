@@ -30,15 +30,16 @@ serve(async (req) => {
         });
       }
 
-      // Fetch custom system prompt
+      // Fetch custom system prompt and model
       const { data: settings } = await supabase
         .from("widget_settings")
-        .select("system_prompt")
+        .select("system_prompt, model")
         .eq("user_id", ownerUserId)
         .maybeSingle();
 
       const systemPrompt = settings?.system_prompt ||
-        `You are BotDesk AI, a friendly and helpful customer support chatbot. Keep responses concise, professional, and helpful.`;
+        `You are NexaDesk AI, a friendly and helpful customer support chatbot. Keep responses concise, professional, and helpful.`;
+      const selectedModel = settings?.model || "google/gemini-3-flash-preview";
 
       const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -47,7 +48,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
+          model: selectedModel,
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           stream: true,
         }),
@@ -79,7 +80,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are BotDesk AI, a friendly and helpful customer support chatbot. You help visitors with their questions about the business. Keep responses concise, professional, and helpful.`,
+            content: `You are NexaDesk AI, a friendly and helpful customer support chatbot. You help visitors with their questions about the business. Keep responses concise, professional, and helpful.`,
           },
           ...messages,
         ],
