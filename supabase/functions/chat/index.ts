@@ -42,6 +42,17 @@ serve(async (req) => {
       if (settings?.training_text) trainingContext += `\n\nTraining Content:\n${settings.training_text}`;
       if (settings?.website_url) trainingContext += `\n\nWebsite: ${settings.website_url}`;
 
+      // Inject Q&A pairs
+      const qaPairs = (settings?.qa_pairs as { question: string; answer: string }[] | null) || [];
+      if (qaPairs.length > 0) {
+        trainingContext += `\n\nQ&A Knowledge Base:`;
+        for (const qa of qaPairs) {
+          if (qa.question && qa.answer) {
+            trainingContext += `\nQ: ${qa.question}\nA: ${qa.answer}\n`;
+          }
+        }
+      }
+
       const trainingFiles = (settings?.training_files as { name: string; url: string }[] | null) || [];
       for (const file of trainingFiles) {
         try {
