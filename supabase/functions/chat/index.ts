@@ -33,7 +33,7 @@ serve(async (req) => {
       // Fetch custom system prompt and model
       const { data: settings } = await supabase
         .from("widget_settings")
-        .select("system_prompt, model, training_text, training_files, website_url")
+        .select("system_prompt, model, training_text, training_files, website_url, qa_pairs")
         .eq("user_id", ownerUserId)
         .maybeSingle();
 

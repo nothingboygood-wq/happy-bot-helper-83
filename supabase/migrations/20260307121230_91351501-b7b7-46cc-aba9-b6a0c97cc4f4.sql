@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_settings ADD COLUMN IF NOT EXISTS qa_pairs jsonb DEFAULT '[]'::jsonb;

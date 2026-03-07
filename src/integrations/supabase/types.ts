@@ -178,6 +178,7 @@ export type Database = {
           model: string
           primary_color: string
           profile_picture_url: string | null
+          qa_pairs: Json | null
           system_prompt: string
           template: string
           theme: string
@@ -195,6 +196,7 @@ export type Database = {
           model?: string
           primary_color?: string
           profile_picture_url?: string | null
+          qa_pairs?: Json | null
           system_prompt?: string
           template?: string
           theme?: string
@@ -212,6 +214,7 @@ export type Database = {
           model?: string
           primary_color?: string
           profile_picture_url?: string | null
+          qa_pairs?: Json | null
           system_prompt?: string
           template?: string
           theme?: string
