@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Bot, ArrowLeft, Save, LogOut, ChevronDown, Check, Globe, FileText,
   Type, HelpCircle, Upload, RefreshCw, MessageSquare, Sun, Moon,
+  Plus, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,6 +49,7 @@ const Settings = () => {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [trainingText, setTrainingText] = useState("");
   const [trainingFiles, setTrainingFiles] = useState<{ name: string; url: string; size: number }[]>([]);
+  const [qaPairs, setQaPairs] = useState<{ question: string; answer: string }[]>([]);
   const trainingFileInputRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
@@ -80,6 +82,7 @@ const Settings = () => {
         setWebsiteUrl((data as any).website_url || "");
         setTrainingText((data as any).training_text || "");
         setTrainingFiles((data as any).training_files || []);
+        setQaPairs((data as any).qa_pairs || []);
       }
       setLoading(false);
     };
@@ -125,6 +128,7 @@ const Settings = () => {
       website_url: websiteUrl,
       training_text: trainingText,
       training_files: trainingFiles,
+      qa_pairs: qaPairs,
     };
 
     const { data: existing } = await supabase
@@ -339,19 +343,67 @@ const Settings = () => {
                   />
                 </div>
 
-                {/* Q&A - placeholder */}
-                <div className="border border-border rounded-xl p-5 opacity-60">
-                  <div className="flex items-center justify-between">
+                {/* Q&A Pairs */}
+                <div className="border border-border rounded-xl p-5 hover:border-accent/30 transition-colors">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
                         <HelpCircle className="w-5 h-5 text-muted-foreground" />
                       </div>
                       <div>
                         <h3 className="font-medium text-foreground">Q&A Pairs</h3>
-                        <p className="text-xs text-muted-foreground">Add question and answer pairs</p>
+                        <p className="text-xs text-muted-foreground">Add question and answer pairs for precise responses</p>
                       </div>
                     </div>
-                    <span className="text-xs bg-secondary px-2 py-1 rounded-full text-muted-foreground">Coming Soon</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setQaPairs([...qaPairs, { question: "", answer: "" }])}
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add
+                    </Button>
+                  </div>
+                  {qaPairs.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No Q&A pairs yet. Click "Add" to create one.
+                    </p>
+                  )}
+                  <div className="space-y-4">
+                    {qaPairs.map((qa, i) => (
+                      <div key={i} className="border border-border rounded-lg p-4 space-y-3 bg-secondary/20">
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-xs font-medium text-muted-foreground mt-2 shrink-0">Q{i + 1}</span>
+                          <div className="flex-1 space-y-3">
+                            <Input
+                              value={qa.question}
+                              onChange={(e) => {
+                                const updated = [...qaPairs];
+                                updated[i] = { ...updated[i], question: e.target.value };
+                                setQaPairs(updated);
+                              }}
+                              placeholder="e.g. What are your business hours?"
+                            />
+                            <Textarea
+                              value={qa.answer}
+                              onChange={(e) => {
+                                const updated = [...qaPairs];
+                                updated[i] = { ...updated[i], answer: e.target.value };
+                                setQaPairs(updated);
+                              }}
+                              placeholder="e.g. We're open Monday-Friday, 9am-5pm EST."
+                              rows={3}
+                              className="resize-none"
+                            />
+                          </div>
+                          <button
+                            onClick={() => setQaPairs(qaPairs.filter((_, idx) => idx !== i))}
+                            className="text-muted-foreground hover:text-destructive transition-colors mt-2"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
