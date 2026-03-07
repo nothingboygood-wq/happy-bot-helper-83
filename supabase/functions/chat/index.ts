@@ -33,12 +33,28 @@ serve(async (req) => {
       // Fetch custom system prompt and model
       const { data: settings } = await supabase
         .from("widget_settings")
-        .select("system_prompt, model")
+        .select("system_prompt, model, training_text, training_files, website_url")
         .eq("user_id", ownerUserId)
         .maybeSingle();
 
-      const systemPrompt = settings?.system_prompt ||
-        `You are NexaDesk AI, a friendly and helpful customer support chatbot. Keep responses concise, professional, and helpful.`;
+      // Build training context from files
+      let trainingContext = "";
+      if (settings?.training_text) trainingContext += `\n\nTraining Content:\n${settings.training_text}`;
+      if (settings?.website_url) trainingContext += `\n\nWebsite: ${settings.website_url}`;
+
+      const trainingFiles = (settings?.training_files as { name: string; url: string }[] | null) || [];
+      for (const file of trainingFiles) {
+        try {
+          const res = await fetch(file.url);
+          if (res.ok) {
+            const text = await res.text();
+            trainingContext += `\n\nFile "${file.name}":\n${text.slice(0, 10000)}`;
+          }
+        } catch { /* skip failed fetches */ }
+      }
+
+      const systemPrompt = (settings?.system_prompt ||
+        `You are NexaDesk AI, a friendly and helpful customer support chatbot. Keep responses concise, professional, and helpful.`) + trainingContext;
       const selectedModel = settings?.model || "google/gemini-3-flash-preview";
 
       const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
