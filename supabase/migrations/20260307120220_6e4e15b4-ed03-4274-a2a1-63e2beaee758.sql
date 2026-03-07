@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_settings ADD COLUMN IF NOT EXISTS training_files jsonb DEFAULT '[]'::jsonb;

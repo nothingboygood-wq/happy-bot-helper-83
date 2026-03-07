@@ -181,6 +181,7 @@ export type Database = {
           system_prompt: string
           template: string
           theme: string
+          training_files: Json | null
           training_text: string | null
           updated_at: string
           user_id: string
@@ -197,6 +198,7 @@ export type Database = {
           system_prompt?: string
           template?: string
           theme?: string
+          training_files?: Json | null
           training_text?: string | null
           updated_at?: string
           user_id: string
@@ -213,6 +215,7 @@ export type Database = {
           system_prompt?: string
           template?: string
           theme?: string
+          training_files?: Json | null
           training_text?: string | null
           updated_at?: string
           user_id?: string

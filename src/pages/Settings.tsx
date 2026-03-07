@@ -47,6 +47,8 @@ const Settings = () => {
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [trainingText, setTrainingText] = useState("");
+  const [trainingFiles, setTrainingFiles] = useState<{ name: string; url: string; size: number }[]>([]);
+  const trainingFileInputRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -77,6 +79,7 @@ const Settings = () => {
         setProfilePictureUrl((data as any).profile_picture_url || null);
         setWebsiteUrl((data as any).website_url || "");
         setTrainingText((data as any).training_text || "");
+        setTrainingFiles((data as any).training_files || []);
       }
       setLoading(false);
     };
@@ -121,6 +124,7 @@ const Settings = () => {
       profile_picture_url: profilePictureUrl,
       website_url: websiteUrl,
       training_text: trainingText,
+      training_files: trainingFiles,
     };
 
     const { data: existing } = await supabase
@@ -351,20 +355,79 @@ const Settings = () => {
                   </div>
                 </div>
 
-                {/* File upload - placeholder */}
-                <div className="border border-border rounded-xl p-5 opacity-60">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-foreground">File Upload</h3>
-                        <p className="text-xs text-muted-foreground">Upload PDFs, docs, or text files</p>
-                      </div>
+                {/* File upload */}
+                <div className="border border-border rounded-xl p-5 hover:border-accent/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                      <FileText className="w-5 h-5 text-muted-foreground" />
                     </div>
-                    <span className="text-xs bg-secondary px-2 py-1 rounded-full text-muted-foreground">Coming Soon</span>
+                    <div>
+                      <h3 className="font-medium text-foreground">File Upload</h3>
+                      <p className="text-xs text-muted-foreground">Upload .txt, .md, or .csv files (max 2MB each)</p>
+                    </div>
                   </div>
+                  <input
+                    ref={trainingFileInputRef}
+                    type="file"
+                    accept=".txt,.md,.csv"
+                    multiple
+                    className="hidden"
+                    onChange={async (e) => {
+                      const files = e.target.files;
+                      if (!files || !user) return;
+                      setUploading(true);
+                      const newFiles = [...trainingFiles];
+                      for (const file of Array.from(files)) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast.error(`${file.name} exceeds 2MB limit`);
+                          continue;
+                        }
+                        const path = `${user.id}/training/${Date.now()}-${file.name}`;
+                        const { error } = await supabase.storage.from("agent-assets").upload(path, file);
+                        if (error) {
+                          toast.error(`Failed to upload ${file.name}`);
+                          continue;
+                        }
+                        const { data: urlData } = supabase.storage.from("agent-assets").getPublicUrl(path);
+                        newFiles.push({ name: file.name, url: urlData.publicUrl, size: file.size });
+                      }
+                      setTrainingFiles(newFiles);
+                      setUploading(false);
+                      toast.success("Files uploaded!");
+                      if (trainingFileInputRef.current) trainingFileInputRef.current.value = "";
+                    }}
+                  />
+                  <button
+                    onClick={() => trainingFileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="w-full border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center gap-2 hover:border-accent/50 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <Upload className="w-6 h-6 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {uploading ? "Uploading..." : "Click to upload files"}
+                    </span>
+                  </button>
+                  {trainingFiles.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      {trainingFiles.map((f, i) => (
+                        <div key={i} className="flex items-center justify-between px-3 py-2 bg-secondary/50 rounded-lg">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <span className="text-sm text-foreground truncate">{f.name}</span>
+                            <span className="text-xs text-muted-foreground shrink-0">
+                              {(f.size / 1024).toFixed(1)}KB
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => setTrainingFiles(trainingFiles.filter((_, idx) => idx !== i))}
+                            className="text-xs text-destructive hover:underline shrink-0 ml-2"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
