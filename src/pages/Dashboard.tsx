@@ -114,7 +114,18 @@ const Dashboard = () => {
     fetchMessages();
   }, [selectedConvo]);
 
-  const isTrialExpired = subscription?.plan === "trial" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
+  const isFreeTrialExpired = subscription?.plan === "free" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
+  const isTrialExpired = isFreeTrialExpired || (subscription?.plan === "trial" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date());
+
+  const planLimits: Record<string, number> = { free: 50, starter: 500, growth: 5000, high_end: -1, admin: -1 };
+  const currentPlan = subscription?.plan || "free";
+  const convLimit = planLimits[currentPlan] ?? 500;
+  const convUsed = conversations.filter(c => {
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+    return new Date(c.created_at) >= monthStart;
+  }).length;
 
   if (authLoading || loading || subLoading) {
     return (
