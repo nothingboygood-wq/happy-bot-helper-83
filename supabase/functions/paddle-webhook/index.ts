@@ -6,6 +6,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const PRICE_TO_PLAN: Record<string, string> = {
+  // Monthly
+  "pri_01kjvpen0tdqe4tg6faypq8x88": "starter",
+  "pri_01kjvpfw6ks6bhjb92hev88ssy": "growth",
+  "pri_01kjvpjk6cx315wps5hdd818eh": "high_end",
+  // Yearly
+  "pri_01kkc98m715d7nw0wtpwysgf0q": "starter",
+  "pri_01kkc9jhsp1h5htkfq6xgdvk6m": "growth",
+  "pri_01kkc9q0bhe3kf1gaetm0wyaa3": "high_end",
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,7 +42,7 @@ Deno.serve(async (req) => {
       const customerEmail = data.customer?.email || data.customer_id;
       const paddleSubId = data.id;
       const paddleCustomerId = data.customer_id;
-      const status = data.status; // active, paused, canceled, past_due, trialing
+      const status = data.status;
 
       // Find user by email
       const { data: profiles } = await supabase
@@ -49,12 +60,7 @@ Deno.serve(async (req) => {
 
       const userId = profiles[0].user_id;
       const priceId = data.items?.[0]?.price?.id;
-      const plan =
-        priceId === "pri_01kjvpen0tdqe4tg6faypq8x88"
-          ? "starter"
-          : priceId === "pri_01kjvpfw6ks6bhjb92hev88ssy"
-          ? "growth"
-          : "high_end";
+      const plan = PRICE_TO_PLAN[priceId] || "starter";
 
       const subStatus =
         status === "active" || status === "trialing" ? "active" : "inactive";
@@ -75,6 +81,7 @@ Deno.serve(async (req) => {
             paddle_subscription_id: paddleSubId,
             paddle_customer_id: paddleCustomerId,
             activated_at: new Date().toISOString(),
+            trial_ends_at: null, // Clear trial on paid plan
           })
           .eq("user_id", userId);
       } else {

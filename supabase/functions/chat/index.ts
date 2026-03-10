@@ -6,6 +6,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const PLAN_LIMITS: Record<string, number> = {
+  free: 50,
+  starter: 500,
+  growth: 5000,
+  high_end: -1, // unlimited
+  admin: -1,
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -22,12 +30,35 @@ serve(async (req) => {
       const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
+      // Check subscription status
       const { data: isActive } = await supabase.rpc("is_subscription_active", { _user_id: ownerUserId });
       if (!isActive) {
-        return new Response(JSON.stringify({ error: "Subscription inactive or expired." }), {
+        return new Response(JSON.stringify({ error: "Subscription inactive or expired. Please upgrade your plan." }), {
           status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+
+      // Check conversation limits based on plan
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("plan")
+        .eq("user_id", ownerUserId)
+        .maybeSingle();
+
+      if (sub) {
+        const limit = PLAN_LIMITS[sub.plan] ?? 500;
+        if (limit > 0) {
+          const { data: count } = await supabase.rpc("get_monthly_conversation_count", { _user_id: ownerUserId });
+          if ((count ?? 0) >= limit) {
+            return new Response(JSON.stringify({ 
+              error: `Monthly conversation limit reached (${limit}). Please upgrade your plan.` 
+            }), {
+              status: 429,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        }
       }
 
       // Fetch custom system prompt and model
@@ -95,7 +126,7 @@ serve(async (req) => {
       });
     }
 
-    // Default path (internal chat widget on BotDesk site)
+    // Default path (internal chat widget on NexaDesk site)
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
