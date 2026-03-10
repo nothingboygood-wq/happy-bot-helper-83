@@ -11,14 +11,14 @@ const plans = [
     name: "Starter",
     price: "$29",
     period: "/mo",
-    priceId: PADDLE_PRICES.starter,
+    priceId: PADDLE_PRICES.starter.monthly,
     features: ["1 website integration", "500 conversations/mo", "Basic Q&A bot", "Email escalation"],
   },
   {
     name: "Growth",
     price: "$79",
     period: "/mo",
-    priceId: PADDLE_PRICES.growth,
+    priceId: PADDLE_PRICES.growth.monthly,
     popular: true,
     features: ["5 integrations", "5,000 conversations/mo", "Advanced NLP", "Multi-language", "Live chat escalation"],
   },
@@ -26,7 +26,7 @@ const plans = [
     name: "High End",
     price: "$120",
     period: "/mo",
-    priceId: PADDLE_PRICES.highEnd,
+    priceId: PADDLE_PRICES.highEnd.monthly,
     features: ["Unlimited integrations", "Unlimited conversations", "Custom AI training", "Dedicated manager"],
   },
 ];
@@ -98,8 +98,8 @@ const ActivateTrial = () => {
             <div className="w-14 h-14 rounded-2xl gradient-accent flex items-center justify-center mx-auto mb-4">
               <Bot className="w-8 h-8 text-accent-foreground" />
             </div>
-            <h1 className="font-display text-3xl font-bold text-foreground">Choose Your Plan</h1>
-            <p className="text-muted-foreground mt-2">Pick a plan to activate your NexaDesk AI chatbot</p>
+            <h1 className="font-display text-3xl font-bold text-foreground">Upgrade Your Plan</h1>
+            <p className="text-muted-foreground mt-2">Your free trial has ended. Choose a plan to continue using NexaDesk.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">

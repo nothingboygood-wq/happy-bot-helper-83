@@ -22,10 +22,7 @@ const PricingPage = () => {
               </Button>
             </Link>
             <Link to="/auth">
-              <Button
-                size="sm"
-                className="bg-foreground text-background hover:bg-foreground/90 border-0"
-              >
+              <Button size="sm" className="bg-foreground text-background hover:bg-foreground/90 border-0">
                 Get Started
               </Button>
             </Link>
@@ -36,14 +33,13 @@ const PricingPage = () => {
       <main>
         <Pricing />
 
-        {/* FAQ-like trust section */}
         <section className="py-20 px-6 bg-secondary/30">
           <div className="container max-w-2xl mx-auto text-center">
             <h3 className="font-display text-2xl font-bold text-foreground mb-3">
               No contracts. No surprises.
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              All plans include a 2-day free trial. Cancel anytime from your dashboard.
+              Start with a free 7-day trial. Upgrade anytime. Cancel from your dashboard.
               Your data stays yours — we never share or sell it.
             </p>
             <Link to="/">

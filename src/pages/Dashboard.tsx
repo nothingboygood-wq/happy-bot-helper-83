@@ -114,7 +114,18 @@ const Dashboard = () => {
     fetchMessages();
   }, [selectedConvo]);
 
-  const isTrialExpired = subscription?.plan === "trial" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
+  const isFreeTrialExpired = subscription?.plan === "free" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
+  const isTrialExpired = isFreeTrialExpired || (subscription?.plan === "trial" && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date());
+
+  const planLimits: Record<string, number> = { free: 50, starter: 500, growth: 5000, high_end: -1, admin: -1 };
+  const currentPlan = subscription?.plan || "free";
+  const convLimit = planLimits[currentPlan] ?? 500;
+  const convUsed = conversations.filter(c => {
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+    return new Date(c.created_at) >= monthStart;
+  }).length;
 
   if (authLoading || loading || subLoading) {
     return (
@@ -164,12 +175,59 @@ const Dashboard = () => {
 
       <div className="container max-w-7xl mx-auto px-6 py-8">
         {isTrialExpired && (
-          <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Your trial has expired</p>
-              <p className="text-xs text-muted-foreground">Your chatbot widget is currently disabled. Upgrade to continue using NexaDesk.</p>
+          <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-destructive shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {isFreeTrialExpired ? "Your free trial has expired" : "Your trial has expired"}
+                </p>
+                <p className="text-xs text-muted-foreground">Your chatbot widget is currently disabled. Upgrade to continue using NexaDesk.</p>
+              </div>
             </div>
+            <Button size="sm" onClick={() => navigate("/activate")} className="gradient-accent text-accent-foreground border-0 shrink-0">
+              Upgrade
+            </Button>
+          </div>
+        )}
+
+        {/* Plan Usage */}
+        {subscription && !isTrialExpired && (
+          <div className="mb-6 p-4 rounded-xl bg-card ring-1 ring-border shadow-card flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
+                <Shield className="w-4 h-4 text-accent-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground capitalize">{currentPlan === "high_end" ? "High End" : currentPlan} Plan</p>
+                {currentPlan === "free" && subscription.trial_ends_at && (
+                  <p className="text-xs text-muted-foreground">
+                    Trial ends {format(new Date(subscription.trial_ends_at), "MMM d, yyyy")}
+                  </p>
+                )}
+              </div>
+            </div>
+            {convLimit > 0 && (
+              <div className="flex items-center gap-3 flex-1 max-w-xs">
+                <div className="flex-1">
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                    <span>{convUsed} / {convLimit} conversations</span>
+                    <span>{Math.round((convUsed / convLimit) * 100)}%</span>
+                  </div>
+                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                    <div
+                      className="h-full gradient-accent rounded-full transition-all"
+                      style={{ width: `${Math.min((convUsed / convLimit) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            {(currentPlan === "free" || currentPlan === "starter") && (
+              <Button size="sm" variant="outline" onClick={() => navigate("/activate")} className="shrink-0">
+                Upgrade
+              </Button>
+            )}
           </div>
         )}
         {/* Stats */}

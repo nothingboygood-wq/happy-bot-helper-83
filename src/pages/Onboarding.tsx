@@ -8,28 +8,23 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Bot,
   Building2,
-  MessageSquare,
   Code,
   ArrowRight,
   ArrowLeft,
   Check,
   Copy,
-  Sparkles,
   LogOut,
 } from "lucide-react";
-import { usePaddle, PADDLE_PRICES } from "@/hooks/usePaddle";
 
 const steps = [
   { label: "Welcome", icon: Building2 },
   { label: "Bot Setup", icon: Bot },
   { label: "Widget", icon: Code },
-  { label: "Plan", icon: Sparkles },
 ];
 
 const Onboarding = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { openCheckout } = usePaddle();
 
   const [step, setStep] = useState(0);
   const [companyName, setCompanyName] = useState("");
@@ -51,7 +46,6 @@ const Onboarding = () => {
 
   useEffect(() => {
     if (!user) return;
-    // Check if user already has an active subscription — skip to dashboard
     const check = async () => {
       const { data: sub } = await supabase
         .from("subscriptions")
@@ -62,7 +56,6 @@ const Onboarding = () => {
         navigate("/dashboard");
       }
 
-      // Load existing profile data
       const { data: profile } = await supabase
         .from("profiles")
         .select("company_name")
@@ -111,6 +104,47 @@ const Onboarding = () => {
     }
   };
 
+  const activateFreeTrial = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await saveStep();
+      // Create free trial subscription (7 days, 50 conversations)
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 7);
+
+      const { data: existingSub } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!existingSub) {
+        await supabase.from("subscriptions").insert({
+          user_id: user.id,
+          status: "active",
+          plan: "free",
+          trial_ends_at: trialEnd.toISOString(),
+          activated_at: new Date().toISOString(),
+        });
+      }
+
+      // Ensure widget settings exist
+      const { data: ws } = await supabase
+        .from("widget_settings")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!ws) {
+        await supabase.from("widget_settings").insert({ user_id: user.id });
+      }
+
+      navigate("/dashboard");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const next = async () => {
     await saveStep();
     if (step < steps.length - 1) setStep(step + 1);
@@ -128,15 +162,8 @@ const Onboarding = () => {
     );
   }
 
-  const plans = [
-    { name: "Starter", price: "$29", period: "/mo", priceId: PADDLE_PRICES.starter, features: ["1 integration", "500 conversations/mo"] },
-    { name: "Growth", price: "$79", period: "/mo", priceId: PADDLE_PRICES.growth, popular: true, features: ["5 integrations", "5,000 conversations/mo"] },
-    { name: "High End", price: "$120", period: "/mo", priceId: PADDLE_PRICES.highEnd, features: ["Unlimited integrations", "Unlimited conversations"] },
-  ];
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top bar */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg gradient-accent flex items-center justify-center">
@@ -260,73 +287,19 @@ const Onboarding = () => {
             </div>
           )}
 
-          {/* Step 3: Plan */}
-          {step === 3 && (
-            <div>
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 rounded-2xl gradient-accent flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="w-8 h-8 text-accent-foreground" />
-                </div>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-2">Choose Your Plan</h2>
-                <p className="text-muted-foreground">Pick a plan to activate your NexaDesk chatbot.</p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-4">
-                {plans.map((plan) => (
-                  <div
-                    key={plan.name}
-                    className={`rounded-2xl transition-all ${
-                      plan.popular
-                        ? "bg-foreground text-background ring-1 ring-foreground shadow-elevated"
-                        : "bg-card ring-1 ring-border shadow-card"
-                    }`}
-                  >
-                    {plan.popular && (
-                      <div className="text-center pt-3">
-                        <span className="px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold uppercase">Popular</span>
-                      </div>
-                    )}
-                    <div className="p-5">
-                      <h3 className={`font-display font-semibold mb-1 ${plan.popular ? "text-background" : "text-foreground"}`}>{plan.name}</h3>
-                      <div className="mb-4">
-                        <span className={`text-3xl font-display font-bold ${plan.popular ? "text-background" : "text-foreground"}`}>{plan.price}</span>
-                        <span className={`text-sm ml-1 ${plan.popular ? "text-background/50" : "text-muted-foreground"}`}>{plan.period}</span>
-                      </div>
-                      <Button
-                        className={`w-full group ${plan.popular ? "bg-accent text-accent-foreground hover:bg-accent/90" : "bg-foreground text-background hover:bg-foreground/90"}`}
-                        onClick={() => openCheckout(plan.priceId, user?.email ?? undefined)}
-                      >
-                        Subscribe <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
-                      </Button>
-                      <ul className="mt-4 space-y-2">
-                        {plan.features.map((f) => (
-                          <li key={f} className="flex items-center gap-2 text-xs">
-                            <Check className={`w-3 h-3 ${plan.popular ? "text-accent" : "text-accent"}`} />
-                            <span className={plan.popular ? "text-background/70" : "text-muted-foreground"}>{f}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center mt-4">
-                <Button variant="link" className="text-muted-foreground text-sm" onClick={() => window.open("mailto:nexadesk@gmail.com?subject=Enterprise%20Plan", "_blank")}>
-                  Need Enterprise? Contact Sales →
-                </Button>
-              </div>
-            </div>
-          )}
-
           {/* Navigation */}
           <div className="flex items-center justify-between mt-8">
             <Button variant="ghost" onClick={prev} disabled={step === 0}>
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
-            {step < 3 && (
+            {step < steps.length - 1 ? (
               <Button onClick={next} disabled={saving} className="gradient-accent text-accent-foreground hover:opacity-90 border-0">
                 {saving ? "Saving..." : "Continue"}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Button onClick={activateFreeTrial} disabled={saving} className="gradient-accent text-accent-foreground hover:opacity-90 border-0">
+                {saving ? "Activating..." : "Start Free Trial (7 days)"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             )}

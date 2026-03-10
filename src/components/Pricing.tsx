@@ -8,10 +8,25 @@ import ScrollReveal from "@/components/ScrollReveal";
 
 const monthlyPlans = [
   {
+    name: "Free",
+    price: "$0",
+    period: "",
+    priceId: null,
+    description: "Try NexaDesk free for 7 days.",
+    features: [
+      "1 website integration",
+      "50 conversations",
+      "Basic Q&A bot",
+      "7-day access",
+    ],
+    popular: false,
+    cta: "Get Started",
+  },
+  {
     name: "Starter",
     price: "$29",
     period: "/mo",
-    priceId: PADDLE_PRICES.starter,
+    priceId: PADDLE_PRICES.starter.monthly,
     description: "For small businesses getting started with AI support.",
     features: [
       "1 website integration",
@@ -21,13 +36,13 @@ const monthlyPlans = [
       "Standard support",
     ],
     popular: false,
-    cta: "Start Free Trial",
+    cta: "Subscribe",
   },
   {
     name: "Growth",
     price: "$79",
     period: "/mo",
-    priceId: PADDLE_PRICES.growth,
+    priceId: PADDLE_PRICES.growth.monthly,
     description: "For growing teams that need advanced capabilities.",
     features: [
       "5 website integrations",
@@ -39,13 +54,13 @@ const monthlyPlans = [
       "Priority support",
     ],
     popular: true,
-    cta: "Start Free Trial",
+    cta: "Subscribe",
   },
   {
     name: "High End",
     price: "$120",
     period: "/mo",
-    priceId: PADDLE_PRICES.highEnd,
+    priceId: PADDLE_PRICES.highEnd.monthly,
     description: "For large-scale operations with premium capabilities.",
     features: [
       "Unlimited integrations",
@@ -57,14 +72,19 @@ const monthlyPlans = [
       "SLA guarantee",
     ],
     popular: false,
-    cta: "Start Free Trial",
+    cta: "Subscribe",
   },
 ];
 
 const yearlyPlans = monthlyPlans.map((plan) => ({
   ...plan,
-  price: plan.name === "Starter" ? "$23" : plan.name === "Growth" ? "$63" : "$96",
-  period: "/mo",
+  ...(plan.name === "Free"
+    ? {}
+    : plan.name === "Starter"
+    ? { price: "$23", period: "/mo", priceId: PADDLE_PRICES.starter.yearly }
+    : plan.name === "Growth"
+    ? { price: "$63", period: "/mo", priceId: PADDLE_PRICES.growth.yearly }
+    : { price: "$96", period: "/mo", priceId: PADDLE_PRICES.highEnd.yearly }),
 }));
 
 const Pricing = () => {
@@ -75,9 +95,14 @@ const Pricing = () => {
 
   const plans = billing === "monthly" ? monthlyPlans : yearlyPlans;
 
-  const handlePlanClick = (plan: typeof monthlyPlans[0]) => {
+  const handlePlanClick = (plan: (typeof monthlyPlans)[0]) => {
     if (!user) {
       navigate("/auth");
+      return;
+    }
+    if (!plan.priceId) {
+      // Free plan — go to onboarding to activate trial
+      navigate("/onboarding");
       return;
     }
     openCheckout(plan.priceId, user.email ?? undefined);
@@ -85,7 +110,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="py-28 px-6">
-      <div className="container max-w-6xl mx-auto">
+      <div className="container max-w-7xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
             <p className="text-accent font-medium text-sm tracking-wider uppercase mb-3">
@@ -95,7 +120,7 @@ const Pricing = () => {
               Plans that scale with you
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
-              Start with a free trial. Upgrade when you're ready. No hidden fees, cancel anytime.
+              Start free. Upgrade when you're ready. No hidden fees, cancel anytime.
             </p>
 
             {/* Billing toggle */}
@@ -115,7 +140,7 @@ const Pricing = () => {
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-start">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5 max-w-7xl mx-auto items-start">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -133,7 +158,7 @@ const Pricing = () => {
                 </div>
               )}
 
-              <div className="p-7">
+              <div className="p-6">
                 <h3
                   className={`font-display text-lg font-semibold mb-1 ${
                     plan.popular ? "text-background" : "text-foreground"
@@ -142,14 +167,14 @@ const Pricing = () => {
                   {plan.name}
                 </h3>
                 <p
-                  className={`text-sm mb-6 ${
+                  className={`text-sm mb-5 ${
                     plan.popular ? "text-background/60" : "text-muted-foreground"
                   }`}
                 >
                   {plan.description}
                 </p>
 
-                <div className="mb-8">
+                <div className="mb-7">
                   <span
                     className={`text-4xl font-display font-bold tracking-tight ${
                       plan.popular ? "text-background" : "text-foreground"
@@ -157,14 +182,16 @@ const Pricing = () => {
                   >
                     {plan.price}
                   </span>
-                  <span
-                    className={`text-base ml-1 ${
-                      plan.popular ? "text-background/50" : "text-muted-foreground"
-                    }`}
-                  >
-                    {plan.period}
-                  </span>
-                  {billing === "yearly" && (
+                  {plan.period && (
+                    <span
+                      className={`text-base ml-1 ${
+                        plan.popular ? "text-background/50" : "text-muted-foreground"
+                      }`}
+                    >
+                      {plan.period}
+                    </span>
+                  )}
+                  {billing === "yearly" && plan.name !== "Free" && (
                     <span className={`block text-xs mt-1 ${plan.popular ? "text-background/40" : "text-muted-foreground/60"}`}>
                       billed annually
                     </span>
@@ -185,14 +212,14 @@ const Pricing = () => {
                 </Button>
 
                 <div
-                  className={`my-7 h-px ${
+                  className={`my-6 h-px ${
                     plan.popular ? "bg-background/10" : "bg-border"
                   }`}
                 />
 
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
+                    <li key={feature} className="flex items-start gap-2.5">
                       <div
                         className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                           plan.popular
@@ -218,13 +245,13 @@ const Pricing = () => {
 
           {/* Enterprise */}
           <div className="rounded-2xl bg-card ring-1 ring-border hover:ring-muted-foreground/30 shadow-card">
-            <div className="p-7">
+            <div className="p-6">
               <h3 className="font-display text-lg font-semibold mb-1 text-foreground">Enterprise</h3>
-              <p className="text-sm mb-6 text-muted-foreground">
+              <p className="text-sm mb-5 text-muted-foreground">
                 Custom solutions for large organizations.
               </p>
 
-              <div className="mb-8">
+              <div className="mb-7">
                 <span className="text-4xl font-display font-bold tracking-tight text-foreground">Custom</span>
               </div>
 
@@ -237,9 +264,9 @@ const Pricing = () => {
                 <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5" />
               </Button>
 
-              <div className="my-7 h-px bg-border" />
+              <div className="my-6 h-px bg-border" />
 
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {[
                   "Everything in High End",
                   "Custom integrations",
@@ -249,7 +276,7 @@ const Pricing = () => {
                   "Dedicated infrastructure",
                   "24/7 premium support",
                 ].map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
+                  <li key={feature} className="flex items-start gap-2.5">
                     <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-accent/10 text-accent">
                       <Check className="w-3 h-3" />
                     </div>
