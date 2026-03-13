@@ -1,21 +1,39 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bot, ArrowLeft } from "lucide-react";
+import { Bot, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+
+const getPasswordStrength = (password: string) => {
+  if (!password) return { score: 0, label: "", color: "" };
+  let score = 0;
+  if (password.length >= 6) score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 1) return { score: 1, label: "Weak", color: "bg-destructive" };
+  if (score <= 2) return { score: 2, label: "Fair", color: "bg-yellow-500" };
+  if (score <= 3) return { score: 3, label: "Good", color: "bg-blue-500" };
+  return { score: 4, label: "Strong", color: "bg-green-500" };
+};
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const strength = useMemo(() => getPasswordStrength(password), [password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,15 +90,51 @@ const Auth = () => {
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {/* Password strength indicator */}
+              {password && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full transition-colors ${
+                          i <= strength.score ? strength.color : "bg-secondary"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className={`text-xs ${
+                    strength.score <= 1 ? "text-destructive" :
+                    strength.score <= 2 ? "text-yellow-500" :
+                    strength.score <= 3 ? "text-blue-500" : "text-green-500"
+                  }`}>
+                    {strength.label}
+                    {isSignUp && strength.score <= 2 && (
+                      <span className="text-muted-foreground ml-1">— Use uppercase, numbers & symbols</span>
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
             {!isSignUp && (
               <div className="text-right">
