@@ -18,7 +18,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, widget_user_id } = await req.json();
+    const { messages, widget_user_id, conversation_id } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -59,6 +59,27 @@ serve(async (req) => {
             });
           }
         }
+      }
+
+      // Create or reuse conversation record
+      let convoId = conversation_id;
+      if (!convoId) {
+        const { data: convo } = await supabase
+          .from("conversations")
+          .insert({ user_id: ownerUserId, status: "active", visitor_name: "Website Visitor" })
+          .select("id")
+          .single();
+        convoId = convo?.id;
+      }
+
+      // Save user message
+      const lastUserMsg = messages[messages.length - 1];
+      if (convoId && lastUserMsg?.role === "user") {
+        await supabase.from("messages").insert({
+          conversation_id: convoId,
+          role: "user",
+          content: lastUserMsg.content,
+        });
       }
 
       // Fetch custom system prompt and model
@@ -121,8 +142,61 @@ serve(async (req) => {
         });
       }
 
-      return new Response(response.body, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      // Read the stream, save assistant response, then return it
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullAssistantContent = "";
+      const chunks: Uint8Array[] = [];
+
+      // We need to tee: collect full content AND stream to client
+      // Use TransformStream to intercept
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+
+      // Process in background
+      (async () => {
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            await writer.write(value);
+            const text = decoder.decode(value, { stream: true });
+            const lines = text.split("\n");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const json = line.slice(6).trim();
+                if (json === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(json);
+                  const c = parsed.choices?.[0]?.delta?.content;
+                  if (c) fullAssistantContent += c;
+                } catch {}
+              }
+            }
+          }
+          await writer.close();
+          // Save assistant message after stream completes
+          if (convoId && fullAssistantContent) {
+            await supabase.from("messages").insert({
+              conversation_id: convoId,
+              role: "assistant",
+              content: fullAssistantContent,
+            });
+            // Update conversation timestamp
+            await supabase.from("conversations").update({ updated_at: new Date().toISOString() }).eq("id", convoId);
+          }
+        } catch (e) {
+          console.error("Stream processing error:", e);
+          try { await writer.close(); } catch {}
+        }
+      })();
+
+      return new Response(readable, {
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "text/event-stream",
+          "X-Conversation-Id": convoId || "",
+        },
       });
     }
 
