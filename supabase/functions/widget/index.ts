@@ -131,6 +131,7 @@ serve(async (req) => {
 
   var messages = [{ role: 'assistant', content: GREETING }];
   var isLoading = false;
+  var conversationId = null;
   var msgsEl = win.querySelector('#botdesk-messages');
   var inputEl = win.querySelector('#botdesk-input');
   var sendBtn = win.querySelector('#botdesk-send');
@@ -167,12 +168,18 @@ serve(async (req) => {
     render();
 
     try {
+      var payload = { messages: messages, widget_user_id: OWNER };
+      if (conversationId) payload.conversation_id = conversationId;
       var resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ANON_KEY },
-        body: JSON.stringify({ messages: messages, widget_user_id: OWNER })
+        body: JSON.stringify(payload)
       });
       if (!resp.ok) throw new Error('Error ' + resp.status);
+      // Capture conversation ID from response header
+      var respConvoId = resp.headers.get('x-conversation-id');
+      if (respConvoId) conversationId = respConvoId;
+
       var reader = resp.body.getReader();
       var decoder = new TextDecoder();
       var buf = '';
